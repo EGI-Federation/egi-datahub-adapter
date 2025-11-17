@@ -1,0 +1,3 @@
+@echo off
+echo Building provider containers...
+docker compose -p euh4d-egi-adapter up -d --build --remove-orphans

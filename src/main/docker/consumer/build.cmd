@@ -1,0 +1,3 @@
+@echo off
+echo Building consumer containers...
+docker compose -p euh4d-egi-test up -d --build --remove-orphans

@@ -1,0 +1,67 @@
+version: '3.5'
+
+services:
+  connector:
+    container_name: euh4d-provider
+    image: egi/euh4d-provider
+    build:
+      context: ./connector
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    env_file:
+      - ./connector/provider.env
+    environment:
+      - TITLE=${IDSA_TITLE:-EGI DataHub Connector}
+      - COMPONENT_ENDPOINT=https://${IDSA_CONNECTOR_HOST}:8081
+      - SPRING_SECURITY_USER_NAME=${IDSA_USERNAME}
+      - SPRING_SECURITY_USER_PASSWORD=${IDSA_PASSWORD}
+      - CONFIGURATION_KEYSTOREPASSWORD=${PROVIDER_KEY_STORE_PASSWORD}
+      - SERVER_SSL_KEY_STORE_PASSWORD=${PROVIDER_KEY_STORE_PASSWORD}
+    networks:
+      - local
+
+  connector-ui:
+    container_name: euh4d-provider-ui
+    image: egi/euh4d-provider-ui
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    depends_on:
+      - connector
+    environment:
+      - UI_TITLE="${IDSA_TITLE:-EGI DataHub Connector} UI"
+      - CONNECTOR_USER=${IDSA_USERNAME}
+      - CONNECTOR_PASSWORD=${IDSA_PASSWORD}
+      - CONNECTOR_URL=https://connector:8080
+    ports:
+      - "8082:8083"
+    networks:
+      - local
+    restart: always
+
+  adapter:
+    container_name: euh4d-adapter
+    image: egi/datahub-adapter
+    build:
+      context: ./adapter
+      dockerfile: Dockerfile
+      args:
+        - ITI_TOKEN=${ITI_TOKEN}
+    depends_on:
+      - connector
+    env_file:
+      - adapter/adapter.env
+    environment:
+      - IDSA_USERNAME=${IDSA_USERNAME}
+      - IDSA_PASSWORD=${IDSA_PASSWORD}
+      - IDSA_CONNECTOR=https://connector:8080
+      - QUARKUS_HTTP_SSL_CERTIFICATE_KEY_STORE_PASSWORD=${PROVIDER_KEY_STORE_PASSWORD}
+    ports:
+      - "8080:8088"
+    networks:
+      - local
+
+networks:
+  local:
+    driver: bridge

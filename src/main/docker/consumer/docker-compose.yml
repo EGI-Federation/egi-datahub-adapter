@@ -1,0 +1,44 @@
+version: '3.5'
+
+services:
+  connector:
+    container_name: euh4d-consumer
+    image: egi/euh4d-consumer
+    build:
+      context: ./connector
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8080"
+    env_file:
+      - ./connector/consumer.env
+    environment:
+      - TITLE=${IDSA_TITLE:-EGI Test Connector}
+      - SPRING_SECURITY_USER_NAME=${IDSA_USERNAME}
+      - SPRING_SECURITY_USER_PASSWORD=${IDSA_PASSWORD}
+      - CONFIGURATION_KEYSTOREPASSWORD=${CONSUMER_KEY_STORE_PASSWORD}
+      - SERVER_SSL_KEY_STORE_PASSWORD=${CONSUMER_KEY_STORE_PASSWORD}
+    networks:
+      - local
+
+  connector-ui:
+    container_name: euh4d-consumer-ui
+    image: egi/euh4d-consumer-ui
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    depends_on:
+      - connector
+    environment:
+      - UI_TITLE="${IDSA_TITLE:-EGI Test Connector} UI"
+      - CONNECTOR_USER=${IDSA_USERNAME}
+      - CONNECTOR_PASSWORD=${IDSA_PASSWORD}
+      - CONNECTOR_URL=https://connector:8080
+    ports:
+      - "8084:8083"
+    networks:
+      - local
+    restart: always
+
+networks:
+  local:
+    driver: bridge

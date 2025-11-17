@@ -1,9 +1,7 @@
 # Authors
 
-## Maintainers
+- Levente Farkas <levente.farkas@egi.eu>
 
-Full Name <email>
+# Contributors
 
-## Contributors
-
-[All contributors](https://github.com/EGI-Federation/<REPOSITORY>/graphs/contributors)
+[All contributors](https://github.com/EGI-Federation/egi-datahub-adapter/graphs/contributors)

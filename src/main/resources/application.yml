@@ -1,0 +1,63 @@
+datahub:
+  onezone-host: https://datahub.egi.eu
+  # Tokens for the "euh4d" OneData user that has access to this demo space (and any publicly available space)
+  onezone-token: "MDAxY2xvY2F00aW9uIGRhdGFodWIuZWdpLmV1CjAwNmJpZGVudGlmaWVyIDIvbm1kL3Vzci00zM2JjY2RlYTk4ZTMwOGM00YjI00ZTlkOTZlNTVlOTI3NmNoNjU2MC9hY3QvOWI3ODhiMzI3YmM3MTY4MTYxYWE4NDVkMDUwY2YwNGFjaDhiM2MKMDAxOWNpZCBpbnRlcmZhY2UgPSByZXN00CjAwMWVjaWQgc2VydmljZSA9IG96dy1vbmV6b25lCjAwMmZzaWduYXR1cmUgdblkDO0155MMmSi2OqL00fPkoywTh3PaX23KKFmFZ8OYoK"
+  oneprovider-token: "MDAxY2xvY2F00aW9uIGRhdGFodWIuZWdpLmV1CjAwNmJpZGVudGlmaWVyIDIvbm1kL3Vzci00zM2JjY2RlYTk4ZTMwOGM00YjI00ZTlkOTZlNTVlOTI3NmNoNjU2MC9hY3QvNjA4ZTA4MTM1NGJmY2IzMWVhMmNkYzUwYWU4OGJhMTNjaDQxODkKMDAxOWNpZCBpbnRlcmZhY2UgPSByZXN00CjAwMThjaWQgc2VydmljZSA9IG9wdy00qCjAwMmZzaWduYXR1cmUgOylfOYb8NKgnvThk5ifJud00BHLaHMckkJQG2V58p01Z4K"
+  file-token-validity-days: 5        # at most 7 days
+  file-token-validity-left-days: 2   # update when left validity less than this
+
+idsa:
+  connector: https://localhost:8081
+  username: admin
+  password: password
+
+quarkus:
+  log:
+    level: INFO
+    min-level: DEBUG
+    console:
+      enable: true
+      level: DEBUG
+      format: "%d{HH:mm:ss} %-5p [%c{2.}]] (%t) %s%e%n"
+    file:
+      enable: true
+      path: ./logs/datahub-adapter.log
+      level: DEBUG
+      format: "%d{HH:mm:ss} %-5p [%c{2.}]] (%t) %s%e%n"
+    category:
+      "egi.eu.Actions":
+        level: INFO
+  swagger-ui:
+    always-include: true
+    path: /api/docs
+    theme: flattop
+    urls:
+      default: /openapi
+      production: https://euh4d-datahub.vm.fedcloud.eu/openapi
+    urls-primary-name: default
+  smallrye-openapi:
+    path: /openapi
+    info-version: 1.0.11
+    info-title: EGI DataHub Adapter API
+    info-description: REST API for securely publishing EGI DataHub spaces via IDSA connectors
+    info-contact-name: Contact EUHubs4Data
+    info-contact-url: https://euhubs4data.eu/contact/
+    info-license-name: Apache 2.0
+    info-license-url: http://www.apache.org/licenses/LICENSE-2.0.html
+  jackson:
+    fail-on-unknown-properties: false
+  http:
+    port: 0
+    cors: true
+    insecure-requests: redirect
+    ssl-port: 8088
+    ssl:
+      certificate:
+        key-store-file: adapter-keystore.p12
+        key-store-password: password
+        trust-store-file: euh4d-truststore.p12
+        trust-store-password: euhubs4data
+  ssl:
+    native: true
+  tls:
+    trust-all: true
